@@ -1,0 +1,58 @@
+import type { Category } from "@/types";
+
+export const categories: Category[] = [
+  {
+    id: "cat-1",
+    slug: "roses",
+    name: "Roses",
+    description: "Timeless elegance in every petal. Our curated rose arrangements speak the language of love.",
+    imageUrl: "https://images.pexels.com/photos/28882161/pexels-photo-28882161.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    productCount: 12,
+    order: 1,
+  },
+  {
+    id: "cat-2",
+    slug: "peonies",
+    name: "Peonies",
+    description: "Lush, romantic blooms that fill any room with natural beauty and soft fragrance.",
+    imageUrl: "https://images.pexels.com/photos/14415002/pexels-photo-14415002.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    productCount: 8,
+    order: 2,
+  },
+  {
+    id: "cat-3",
+    slug: "mixed-bouquets",
+    name: "Mixed Bouquets",
+    description: "Artfully composed arrangements blending seasonal blooms into one stunning presentation.",
+    imageUrl: "https://images.pexels.com/photos/28882158/pexels-photo-28882158.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    productCount: 15,
+    order: 3,
+  },
+  {
+    id: "cat-4",
+    slug: "wedding",
+    name: "Wedding Collection",
+    description: "Bespoke bridal bouquets and ceremony florals designed to make your day unforgettable.",
+    imageUrl: "https://images.pexels.com/photos/28882160/pexels-photo-28882160.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    productCount: 10,
+    order: 4,
+  },
+  {
+    id: "cat-5",
+    slug: "dried-flowers",
+    name: "Dried & Preserved",
+    description: "Everlasting beauty — dried arrangements that maintain their charm for months on end.",
+    imageUrl: "https://images.pexels.com/photos/14416299/pexels-photo-14416299.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    productCount: 6,
+    order: 5,
+  },
+  {
+    id: "cat-6",
+    slug: "sympathy",
+    name: "Sympathy & Tributes",
+    description: "Graceful floral tributes to honour and remember loved ones with dignity.",
+    imageUrl: "https://images.pexels.com/photos/28882162/pexels-photo-28882162.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    productCount: 7,
+    order: 6,
+  },
+];

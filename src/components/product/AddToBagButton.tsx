@@ -2,23 +2,30 @@
 
 import { useState } from "react";
 import { ShoppingBag, Check } from "lucide-react";
+import { useCartStore } from "@/store/cart-store";
+import type { Product } from "@/types";
 import Button from "@/components/ui/Button";
 
 interface AddToBagButtonProps {
-  inStock: boolean;
+  product: Product;
 }
 
-export default function AddToBagButton({ inStock }: AddToBagButtonProps) {
+export default function AddToBagButton({ product }: AddToBagButtonProps) {
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+  const { addItem, openCart } = useCartStore();
 
   const handleAdd = () => {
-    // Future: dispatch to cart context / API
+    addItem(product, quantity);
     setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+    
+    setTimeout(() => {
+      setAdded(false);
+      openCart();
+    }, 800);
   };
 
-  if (!inStock) {
+  if (!product.inStock) {
     return (
       <Button variant="outline" size="lg" disabled className="w-full opacity-50">
         Out of Stock
@@ -48,11 +55,17 @@ export default function AddToBagButton({ inStock }: AddToBagButtonProps) {
       </div>
 
       {/* Add to bag */}
-      <Button variant="primary" size="lg" onClick={handleAdd} className="flex-1">
+      <Button 
+        variant={added ? "secondary" : "primary"} 
+        size="lg" 
+        onClick={handleAdd} 
+        className="flex-1"
+        disabled={added}
+      >
         {added ? (
           <>
             <Check size={18} />
-            Added!
+            Added to Bag!
           </>
         ) : (
           <>

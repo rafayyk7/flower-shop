@@ -15,19 +15,19 @@ const footerSections = [
   {
     title: "Company",
     links: [
-      { label: "About Us", href: "#" },
-      { label: "Our Story", href: "#" },
-      { label: "Careers", href: "#" },
-      { label: "Press", href: "#" },
+      { label: "About Us", href: "/about" },
+      { label: "Contact", href: "/contact" },
+      { label: "FAQ", href: "/faq" },
+      { label: "Careers", href: "/about" },
     ],
   },
   {
-    title: "Support",
+    title: "Account",
     links: [
-      { label: "Delivery Info", href: "#" },
-      { label: "Returns & Refunds", href: "#" },
-      { label: "Care Guide", href: "#" },
-      { label: "Contact Us", href: "#" },
+      { label: "My Account", href: "/account" },
+      { label: "Order History", href: "/account/orders" },
+      { label: "Wishlist", href: "/account/wishlist" },
+      { label: "Cart", href: "/cart" },
     ],
   },
 ];
@@ -92,10 +92,10 @@ export default function Footer() {
             © {new Date().getFullYear()} Petal & Bloom. All rights reserved.
           </p>
           <div className="flex gap-6">
-            <Link href="#" className="text-xs text-warm-gray/60 hover:text-dusty-rose transition-colors">
+            <Link href="/faq" className="text-xs text-warm-gray/60 hover:text-dusty-rose transition-colors">
               Privacy Policy
             </Link>
-            <Link href="#" className="text-xs text-warm-gray/60 hover:text-dusty-rose transition-colors">
+            <Link href="/faq" className="text-xs text-warm-gray/60 hover:text-dusty-rose transition-colors">
               Terms of Service
             </Link>
           </div>

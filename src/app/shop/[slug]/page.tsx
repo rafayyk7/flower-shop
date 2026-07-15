@@ -153,7 +153,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
               {/* Add to bag */}
               <div className="mt-8">
-                <AddToBagButton inStock={product.inStock} />
+                <AddToBagButton product={product} />
               </div>
 
               {/* Trust signals */}

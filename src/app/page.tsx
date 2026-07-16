@@ -10,6 +10,7 @@ import TestimonialCard from "@/components/testimonial/TestimonialCard";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Button from "@/components/ui/Button";
 import NewsletterForm from "@/components/home/NewsletterForm";
+import InstagramGallery from "@/components/home/InstagramGallery";
 
 const highlights = [
   {
@@ -55,8 +56,6 @@ export default async function HomePage() {
           fill
           className="object-cover"
           priority
-          quality={100}
-          sizes="100vw"
         />
         {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-charcoal/60 via-charcoal/30 to-transparent" />
@@ -229,6 +228,11 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ════════════════════════════════════════════════════
+          INSTAGRAM GALLERY
+         ════════════════════════════════════════════════════ */}
+      <InstagramGallery />
 
       {/* ════════════════════════════════════════════════════
           NEWSLETTER

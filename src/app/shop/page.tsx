@@ -7,7 +7,13 @@ import ShopFilters from "@/components/shop/ShopFilters";
 export const dynamic = "force-dynamic";
 
 interface ShopPageProps {
-  searchParams: Promise<{ category?: string; sort?: string; q?: string }>;
+  searchParams: Promise<{ 
+    category?: string; 
+    sort?: string; 
+    q?: string;
+    minPrice?: string;
+    maxPrice?: string;
+  }>;
 }
 
 export default async function ShopPage({ searchParams }: ShopPageProps) {
@@ -16,6 +22,10 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     getAllProducts(),
     getAllCategories(),
   ]);
+
+  // Parse price filters
+  const minPrice = params.minPrice ? parseInt(params.minPrice) : undefined;
+  const maxPrice = params.maxPrice ? parseInt(params.maxPrice) : undefined;
 
   // Filter by category if present
   let filtered = allProducts;
@@ -34,6 +44,14 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         p.name.toLowerCase().includes(q) ||
         p.tags.some((t) => t.includes(q)),
     );
+  }
+
+  // Price filter
+  if (minPrice !== undefined) {
+    filtered = filtered.filter((p) => p.price >= minPrice);
+  }
+  if (maxPrice !== undefined && maxPrice < 999) {
+    filtered = filtered.filter((p) => p.price <= maxPrice);
   }
 
   // Sort
@@ -55,7 +73,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
 
   return (
     <>
-      {/* ── Page Header ── */}
+      {/* Page Header */}
       <section className="bg-white py-16 border-b border-cream">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
@@ -66,13 +84,15 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         </div>
       </section>
 
-      {/* ── Filters + Grid ── */}
+      {/* Filters + Grid */}
       <section className="py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <ShopFilters
             categories={categories}
             activeCategory={params.category}
             activeSort={params.sort}
+            minPrice={minPrice}
+            maxPrice={maxPrice}
             resultCount={filtered.length}
           />
 

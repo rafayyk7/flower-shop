@@ -1,20 +1,32 @@
-import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Truck, Shield, RotateCcw } from "lucide-react";
+import Link from "next/link";
+import { Truck, Shield, RotateCcw, Leaf } from "lucide-react";
 import { getProductBySlug, getFeaturedProducts } from "@/services/product-service";
-import { getCategoryBySlug } from "@/services/category-service";
 import { categories } from "@/data/categories";
 import StarRating from "@/components/ui/StarRating";
 import Badge from "@/components/ui/Badge";
 import ProductCard from "@/components/product/ProductCard";
 import SectionHeading from "@/components/ui/SectionHeading";
-import AddToBagButton from "@/components/product/AddToBagButton";
+import ProductDetailClient from "@/components/product/ProductDetailClient";
 
 export const dynamic = "force-dynamic";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params }: ProductPageProps) {
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
+
+  if (!product) {
+    return { title: "Product Not Found" };
+  }
+
+  return {
+    title: `${product.name} — Petal & Bloom`,
+    description: product.shortDescription,
+  };
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
@@ -29,6 +41,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     .slice(0, 4);
 
   const hasDiscount = product.compareAtPrice && product.compareAtPrice > product.price;
+
   const formatPrice = (amount: number) =>
     new Intl.NumberFormat("en-US", { style: "currency", currency: product.currency }).format(
       amount,
@@ -36,7 +49,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   return (
     <>
-      {/* ── Breadcrumb ── */}
+      {/* Breadcrumb */}
       <div className="border-b border-cream bg-white">
         <div className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-4 text-xs text-warm-gray sm:px-6 lg:px-8">
           <Link href="/" className="hover:text-dusty-rose transition-colors">
@@ -62,48 +75,40 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
       </div>
 
-      {/* ── Product Detail ── */}
+      {/* Product Detail */}
       <section className="py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-10 lg:grid-cols-2">
-            {/* Gallery */}
-            <div className="space-y-4">
-              <div className="relative aspect-square overflow-hidden rounded-2xl bg-cream">
-                <Image
-                  src={product.imageUrl}
-                  alt={product.name}
-                  fill
-                  className="object-cover"
-                  priority
-                />
-                {/* Badges */}
-                <div className="absolute top-4 left-4 flex flex-col gap-1.5">
-                  {hasDiscount && (
-                    <Badge variant="sale">
-                      -{Math.round(((product.compareAtPrice! - product.price) / product.compareAtPrice!) * 100)}%
-                    </Badge>
-                  )}
-                  {product.isNew && <Badge variant="new">New</Badge>}
-                  {product.isBestseller && <Badge variant="bestseller">Bestseller</Badge>}
-                </div>
+            {/* Left: Gallery + Badges (Server rendered) */}
+            <div>
+              {/* Badges above gallery on mobile */}
+              <div className="mb-4 flex flex-wrap gap-2 lg:hidden">
+                {hasDiscount && (
+                  <Badge variant="sale">
+                    -{Math.round(((product.compareAtPrice! - product.price) / product.compareAtPrice!) * 100)}%
+                  </Badge>
+                )}
+                {product.isNew && <Badge variant="new">New Arrival</Badge>}
+                {product.isBestseller && <Badge variant="bestseller">Bestseller</Badge>}
               </div>
-              {/* Thumbnail strip */}
-              {product.images.length > 1 && (
-                <div className="grid grid-cols-4 gap-3">
-                  {product.images.map((img, i) => (
-                    <div
-                      key={i}
-                      className="relative aspect-square overflow-hidden rounded-xl bg-cream border-2 border-transparent hover:border-dusty-rose transition-colors cursor-pointer"
-                    >
-                      <Image src={img} alt={`${product.name} ${i + 1}`} fill className="object-cover" />
-                    </div>
-                  ))}
-                </div>
-              )}
+
+              {/* Client-side gallery and selection components */}
+              <ProductDetailClient product={product} />
             </div>
 
-            {/* Info */}
+            {/* Right: Product Info (Server rendered) */}
             <div className="flex flex-col">
+              {/* Badges (desktop) */}
+              <div className="mb-4 hidden flex-wrap gap-2 lg:flex">
+                {hasDiscount && (
+                  <Badge variant="sale">
+                    -{Math.round(((product.compareAtPrice! - product.price) / product.compareAtPrice!) * 100)}% Off
+                  </Badge>
+                )}
+                {product.isNew && <Badge variant="new">New Arrival</Badge>}
+                {product.isBestseller && <Badge variant="bestseller">Bestseller</Badge>}
+              </div>
+
               {category && (
                 <Link
                   href={`/shop?category=${category.slug}`}
@@ -126,7 +131,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
               {/* Price */}
               <div className="mt-6 flex items-baseline gap-3">
-                <span className="text-3xl font-bold text-charcoal">{formatPrice(product.price)}</span>
+                <span className="text-3xl font-bold text-charcoal">
+                  {formatPrice(product.price)}
+                </span>
                 {hasDiscount && (
                   <span className="text-lg text-warm-gray/50 line-through">
                     {formatPrice(product.compareAtPrice!)}
@@ -151,21 +158,17 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 ))}
               </div>
 
-              {/* Add to bag */}
-              <div className="mt-8">
-                <AddToBagButton product={product} />
-              </div>
-
               {/* Trust signals */}
-              <div className="mt-8 grid grid-cols-3 gap-4 border-t border-cream pt-6">
+              <div className="mt-8 grid grid-cols-2 gap-4 rounded-xl bg-cream/50 p-4 sm:grid-cols-4">
                 {[
-                  { icon: Truck, label: "Free delivery over $100" },
-                  { icon: Shield, label: "Freshness guarantee" },
-                  { icon: RotateCcw, label: "Easy returns" },
+                  { icon: Truck, label: "Free Delivery $100+" },
+                  { icon: Shield, label: "7-Day Freshness" },
+                  { icon: RotateCcw, label: "Easy Returns" },
+                  { icon: Leaf, label: "Sustainably Sourced" },
                 ].map((item) => (
                   <div key={item.label} className="flex flex-col items-center text-center">
-                    <item.icon size={18} className="mb-1.5 text-sage" />
-                    <span className="text-[11px] text-warm-gray">{item.label}</span>
+                    <item.icon size={20} className="mb-1.5 text-sage" />
+                    <span className="text-[11px] leading-tight text-warm-gray">{item.label}</span>
                   </div>
                 ))}
               </div>
@@ -174,9 +177,47 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
       </section>
 
-      {/* ── Related Products ── */}
+      {/* Product Details Tabs */}
+      <section className="border-t border-cream bg-white py-12">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-8 md:grid-cols-3">
+            <div>
+              <h3 className="font-heading text-lg font-semibold text-charcoal">What&apos;s Included</h3>
+              <ul className="mt-3 space-y-2 text-sm text-warm-gray">
+                <li>• Hand-arranged premium blooms</li>
+                <li>• Seasonal foliage and accents</li>
+                <li>• Elegant gift wrapping</li>
+                <li>• Flower food packet</li>
+                <li>• Care instructions card</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-heading text-lg font-semibold text-charcoal">Care Instructions</h3>
+              <ul className="mt-3 space-y-2 text-sm text-warm-gray">
+                <li>• Trim stems at 45° angle</li>
+                <li>• Use room temperature water</li>
+                <li>• Change water every 2 days</li>
+                <li>• Keep away from direct sunlight</li>
+                <li>• Remove wilted blooms promptly</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-heading text-lg font-semibold text-charcoal">Delivery Info</h3>
+              <ul className="mt-3 space-y-2 text-sm text-warm-gray">
+                <li>• Same-day delivery before 2 PM</li>
+                <li>• Free shipping on orders $100+</li>
+                <li>• Delivery 7 days a week</li>
+                <li>• Safe drop-off if not home</li>
+                <li>• SMS tracking updates</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Related Products */}
       {relatedProducts.length > 0 && (
-        <section className="bg-white py-20">
+        <section className="py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <SectionHeading subtitle="You May Also Love" title="Related Arrangements" />
             <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

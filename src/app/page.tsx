@@ -55,6 +55,8 @@ export default async function HomePage() {
           fill
           className="object-cover"
           priority
+          quality={100}
+          sizes="100vw"
         />
         {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-charcoal/60 via-charcoal/30 to-transparent" />

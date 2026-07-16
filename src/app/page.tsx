@@ -50,7 +50,7 @@ export default async function HomePage() {
       <section className="relative flex min-h-[85vh] items-center overflow-hidden">
         {/* Background image */}
         <Image
-          src="/images/hero-bg.jpeg"
+          src="/images/hero-bg.jpg"
           alt="Luxurious floral arrangement"
           fill
           className="object-cover"
